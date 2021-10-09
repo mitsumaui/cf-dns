@@ -5,3 +5,5 @@ variable domain {
 variable verify {
     type = string
 }
+
+variable domainlist {}
