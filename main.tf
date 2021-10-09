@@ -19,9 +19,17 @@ terraform {
 #   }
 }
 
+output "domainlist" {
+  value = jsondecode(var.domainlist)
+}
+
 module "migadu" {
-    source = "./modules/migadu-mx-dns"
-    
-    domain = var.domain
-    verify = var.verify
+  source = "./modules/migadu-mx-dns"
+
+  for_each = {for cfdomain in jsondecode(var.domainlist).domainlist: cfdomain.domain => cfdomain}
+  
+  # domain = var.domain
+  # verify = var.verify
+  domain = each.value.domain
+  verify = each.value.verify
 }
