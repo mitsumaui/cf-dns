@@ -31,7 +31,7 @@ resource "cloudflare_record" "mx" {
   proxied = false
   type    = "MX"
   ttl     = 1
-  priority = count.index  + 1 * 10
+  priority = (count.index  + 1) * 10
 }
 
 resource "cloudflare_record" "mx_wildcard" {
@@ -43,7 +43,7 @@ resource "cloudflare_record" "mx_wildcard" {
   proxied = false
   type    = "MX"
   ttl     = 1
-  priority = count.index + 1 * 10
+  priority = (count.index + 1) * 10
 }
 
 resource "cloudflare_record" "cname_dkim" {
