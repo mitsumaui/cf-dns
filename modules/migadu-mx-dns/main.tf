@@ -14,7 +14,7 @@ data "cloudflare_zones" "domain" {
 }
 
 resource "cloudflare_record" "txt_verify" {
-  name    = "hosted-email-verify"
+  name    = var.domain
   zone_id = lookup(data.cloudflare_zones.domain.zones[0], "id")
   value   = "hosted-email-verify=${var.verify}"
   proxied = false
@@ -27,7 +27,7 @@ resource "cloudflare_record" "mx" {
 
   name    = var.domain
   zone_id = lookup(data.cloudflare_zones.domain.zones[0], "id")
-  value   = "aspmx${count.index}.migadu.com"
+  value   = "aspmx${count.index + 1}.migadu.com"
   proxied = false
   type    = "MX"
   ttl     = 1
@@ -39,7 +39,7 @@ resource "cloudflare_record" "mx_wildcard" {
 
   name    = "*"
   zone_id = lookup(data.cloudflare_zones.domain.zones[0], "id")
-  value   = "aspmx${count.index}.migadu.com"
+  value   = "aspmx${count.index + 1}.migadu.com"
   proxied = false
   type    = "MX"
   ttl     = 1
@@ -49,9 +49,9 @@ resource "cloudflare_record" "mx_wildcard" {
 resource "cloudflare_record" "cname_dkim" {
   count = 3
 
-  name    = "key${count.index}._domainkey"
+  name    = "key${count.index + 1}._domainkey"
   zone_id = lookup(data.cloudflare_zones.domain.zones[0], "id")
-  value   = "key${count.index}.${var.domain}._domainkey.migadu.com"
+  value   = "key${count.index + 1}.${var.domain}._domainkey.migadu.com"
   proxied = false
   type    = "CNAME"
   ttl     = 1
@@ -96,7 +96,7 @@ resource "cloudflare_record" "srv_autodiscover" {
   data {
     service  = "_autodiscover"
     proto    = "_tcp"
-    name     = "srv-autodiscover"
+    name     = var.domain
     priority = 0
     weight   = 1
     port     = 443
@@ -114,7 +114,7 @@ resource "cloudflare_record" "srv_submissions" {
   data {
     service  = "_submissions"
     proto    = "_tcp"
-    name     = "srv-submissions"
+    name     = var.domain
     priority = 0
     weight   = 1
     port     = 465
@@ -132,7 +132,7 @@ resource "cloudflare_record" "srv_imaps" {
   data {
     service  = "_imaps"
     proto    = "_tcp"
-    name     = "srv-imaps"
+    name     = var.domain
     priority = 0
     weight   = 1
     port     = 993
@@ -150,7 +150,7 @@ resource "cloudflare_record" "srv_pop3s" {
   data {
     service  = "_pop3s"
     proto    = "_tcp"
-    name     = "srv-pop3s"
+    name     = var.domain
     priority = 0
     weight   = 1
     port     = 995
